@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "nome": "Bota Feminina Marrom",
+    "preco": 199.99,
+    "categoria": "botas",
+     "imagem": "/images/tenis1.jpeg"
+  },
+  {
+    "id": "2",
+    "nome": "Tênis Esportivo Branco",
+    "preco": 149.90,
+    "categoria": "tenis",
+    "imagem": "/images/tenis2.jpeg"
+  },
+  {
+    "id": "3",
+    "nome": "Sandália Preta Social",
+    "preco": 89.99,
+    "categoria": "sandalias",
+    "imagem": "/images/tenis3.jpeg"
+  },
+  {
+    "id": "4",
+    "nome": "Tenis Rosa",
+    "preco": 79.90,
+    "categoria": "tenis",
+    "imagem": "/images/tenis4.jpeg"
+  },
+  {
+    "id": "5",
+    "nome": "Chinelo Slide Preto",
+    "preco": 49.90,
+    "categoria": "chinelos",
+    "imagem": "/images/tenis5.jpeg"
+  }
+  
+]
