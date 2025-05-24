@@ -7,6 +7,7 @@ import { Sun, Moon } from "lucide-react";
 import "@fontsource/poppins";
 import { useFavoritos } from "../components/context/FavoritosContext";
 import { Heart, HeartOff } from "lucide-react";
+import { BannerCarrossel } from "../components/BannerCarrossel";
 
 const Home = () => {
   const [produtos, setProdutos] = useState([]);
@@ -53,19 +54,10 @@ const Home = () => {
           </button>
         </div>
       )}
+<BannerCarrossel />
 
       {/* Hero */}
-      <div className="relative bg-gradient-to-r from-[#B6A58B] to-[#A18F75] h-[500px] flex flex-col items-center justify-center text-center px-4 text-white">
-        <h1 className="text-5xl font-extrabold drop-shadow mb-4 animate-fadeIn">Bem-vindo à Buenas Store</h1>
-        <p className="text-lg max-w-xl mb-6 animate-fadeIn delay-200">Calçados que combinam conforto e estilo para todos os momentos do seu dia.</p>
-        <button
-          onClick={() => document.getElementById("produtos").scrollIntoView({ behavior: "smooth" })}
-          className="bg-[#5B5141] text-white px-6 py-2 rounded-full font-semibold flex items-center gap-2 hover:bg-[#403828] hover:scale-105 transition-all duration-300 shadow-lg"
-        >
-          Ver Produtos <FiArrowRight />
-        </button>
-        <img src="/images/bg-tenis.png" alt="Background" className="absolute right-0 bottom-0 w-1/3 opacity-20 hidden md:block" />
-      </div>
+  
 
       {/* Sobre */}
       <div className={`max-w-4xl mx-auto py-20 px-4 text-center ${modoEscuro ? "bg-[#2e2e2e] text-white" : "bg-white text-[#5B5141]"} rounded-xl shadow-md mt-[-60px] z-10 relative animate-slideUp`}>
@@ -74,7 +66,7 @@ const Home = () => {
           Fundada com o propósito de levar calçados de qualidade e bom gosto ao público brasileiro, a Buenas Store é mais do que uma loja — é uma experiência.
         </p>
       </div>
-
+      
       {/* Categorias */}
       <div className={`${modoEscuro ? "bg-[#1a1a1a] text-white" : "bg-white text-[#5B5141]"} py-16 px-4 text-center`}>
         <h2 className="text-3xl font-semibold mb-8">Categorias</h2>

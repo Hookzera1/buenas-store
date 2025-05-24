@@ -20,6 +20,8 @@ import Pagamento from "./pages/Pagamento";
 import Confirmacao from "./pages/Confirmacao";
 import Sucesso from "./pages/Sucesso"; // ✅ import
 import Pedidos from "./pages/Pedidos";
+import WhatsappChat from "./components/WhatsappChat";
+
 function App() {
   return (
     <CarrinhoProvider>
@@ -45,6 +47,7 @@ function App() {
   </RotaProtegida>
 } />
       </Routes>
+      <WhatsappChat /> {/* Adiciona o botão flutuante aqui */}
        <ToastContainer position="top-right" autoClose={3000} />
     </CarrinhoProvider>
   );
