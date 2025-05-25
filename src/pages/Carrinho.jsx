@@ -46,12 +46,12 @@ const Carrinho = () => {
       const data = await response.json();
 
       if (data.init_point) {
-        // 🔄 Agora só redireciona, não limpa o carrinho nem registra o pedido ainda
-        window.location.href = data.init_point;
-      } else {
-        toast.error("Erro ao criar pagamento.");
-        console.error("Erro da API:", data);
-      }
+  // Redireciona para uma nova aba
+  window.open(data.init_point, "_blank");
+} else {
+  toast.error("Erro ao criar pagamento.");
+  console.error("Erro da API:", data);
+}
     } catch (error) {
       console.error("Erro ao iniciar pagamento:", error);
       toast.error("Erro ao conectar com o Mercado Pago.");
