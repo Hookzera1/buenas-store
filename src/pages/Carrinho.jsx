@@ -15,7 +15,7 @@ const Carrinho = () => {
     desconto,
     total,
     totalComDesconto,
-    registrarPedido,
+    registrarPedido, // continua disponível, mas agora será usado na página de sucesso
   } = useCarrinho();
 
   const [modoEscuro, setModoEscuro] = useState(false);
@@ -26,41 +26,40 @@ const Carrinho = () => {
   };
 
   const pagarComMercadoPago = async () => {
-  const itensParaPagar = carrinho.map((item) => ({
-    title: item.nome,
-    unit_price: parseFloat(item.preco),
-    quantity: item.quantidade,
-  }));
-console.log("Itens enviados ao Mercado Pago:", itensParaPagar);
+    const itensParaPagar = carrinho.map((item) => ({
+      title: item.nome,
+      unit_price: parseFloat(item.preco),
+      quantity: item.quantidade,
+    }));
 
-  try {
-    const response = await fetch("https://buenas-store.vercel.app/api/create-preference", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ itens: itensParaPagar }),
-    });
+    console.log("Itens enviados ao Mercado Pago:", itensParaPagar);
 
-    const data = await response.json();
+    try {
+      const response = await fetch("https://buenas-store.vercel.app/api/create-preference", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ itens: itensParaPagar }),
+      });
 
-    if (data.init_point) {
-      registrarPedido(); // Registra o pedido antes do redirecionamento
-      window.location.href = data.init_point;
-    } else {
-      toast.error("Erro ao criar pagamento.");
-      console.error("Erro da API:", data);
+      const data = await response.json();
+
+      if (data.init_point) {
+        // 🔄 Agora só redireciona, não limpa o carrinho nem registra o pedido ainda
+        window.location.href = data.init_point;
+      } else {
+        toast.error("Erro ao criar pagamento.");
+        console.error("Erro da API:", data);
+      }
+    } catch (error) {
+      console.error("Erro ao iniciar pagamento:", error);
+      toast.error("Erro ao conectar com o Mercado Pago.");
     }
-  } catch (error) {
-    console.error("Erro ao iniciar pagamento:", error);
-    toast.error("Erro ao conectar com o Mercado Pago.");
-  }
-};
-
+  };
 
   return (
     <div className={`min-h-screen ${modoEscuro ? "bg-[#1a1a1a] text-white" : "bg-[#EFEAE1] text-[#5B5141]"} font-[Poppins]`}>
-      {/* Botão Modo Escuro */}
       <div className="fixed bottom-5 right-5 z-50">
         <button
           onClick={() => setModoEscuro(!modoEscuro)}
