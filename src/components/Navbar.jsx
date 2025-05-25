@@ -1,166 +1,140 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import {
-  FiChevronDown,
-  FiShoppingCart,
-  FiUser,
-  FiHome,
-  FiList,
-  FiClock,
-  FiMenu,
-  FiX
-} from "react-icons/fi";
-import { useCarrinho } from "./context/CarrinhoContext";
-import { auth } from "../firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-
-const categorias = ["Botas", "Tênis", "Sandálias", "Sapatilhas", "Chinelos"];
+import { Link, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { FiUser, FiHeart, FiShoppingCart, FiLogOut, FiChevronDown } from "react-icons/fi";
+import { auth, db } from "../firebase";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import React from 'react';
 
 const Navbar = () => {
-  const [menuAberto, setMenuAberto] = useState(false);
-  const [mobileAberto, setMobileAberto] = useState(false);
-  const [user, setUser] = useState(null);
-  const { items } = useCarrinho();
-  const navigate = useNavigate();
   const location = useLocation();
+  const [user, setUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
-  const totalItens = Array.isArray(items)
-    ? items.reduce((total, item) => total + (item.quantidade || 0), 0)
-    : 0;
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u));
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setMenuAberto(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    setMenuAberto(false);
-    setMobileAberto(false);
-  }, [location]);
-
-  const handleLogout = async () => {
-    await signOut(auth);
-    navigate("/");
-  };
 
   const isActive = (path) => location.pathname === path;
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      if (u) {
+        const docRef = doc(db, "users", u.uid);
+        const docSnap = await getDoc(docRef);
+        const userData = docSnap.exists() ? docSnap.data() : {};
+        setUser({ uid: u.uid, email: u.email, role: userData.role || "user" });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+
+  const isAdmin = user?.role === "admin";
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-[#B6A58B] to-[#A18F75] shadow-md text-white font-[Poppins]">
-      <nav className="w-full px-6 py-4 flex items-center relative">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
-          <img src="/logo.png" alt="Buenas Store Logo" className="h-14 w-auto" />
-          <span className="text-xl font-bold">Buenas Store</span>
+    <nav className="bg-[#5B5141] text-white p-4 flex justify-between items-center shadow-md z-50 relative">
+      {/* Logo */}
+      <Link to="/" className="flex items-center gap-2">
+        <img src="/images/logo.png" alt="Logo da Buenas Store" className="h-12 w-auto" />
+        <span className="text-xl font-bold tracking-wide hover:text-green-400 transition">
+          Buenas Store
+        </span>
+      </Link>
+
+      {/* Menu de navegação */}
+      <div className="flex items-center gap-6 text-sm">
+        <Link
+          to="/"
+          className={`hover:text-green-400 transition ${isActive("/") ? "underline font-semibold" : ""}`}
+        >
+          Início
         </Link>
 
-        {/* Botão Mobile */}
-        <button
-          onClick={() => setMobileAberto(!mobileAberto)}
-          className="sm:hidden text-white text-2xl ml-auto"
-        >
-          {mobileAberto ? <FiX /> : <FiMenu />}
-        </button>
-
-        {/* Links */}
-        <div className={`sm:flex gap-6 items-center ml-auto ${mobileAberto ? "block mt-4" : "hidden"} sm:mt-0`}>
-          <Link
-            to="/"
-            className={`flex items-center gap-1 hover:text-neutral-100 transition ${isActive("/") ? "underline font-semibold" : ""}`}
+        {/* Categorias dropdown */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="flex items-center gap-1 hover:text-green-400 transition"
           >
-            <FiHome /> Início
-          </Link>
+            Categorias <FiChevronDown />
+          </button>
 
-          {/* Dropdown de Categorias */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setMenuAberto(!menuAberto)}
-              className="flex items-center gap-1 hover:text-neutral-100 transition"
-            >
-              <FiList /> Categorias <FiChevronDown />
-            </button>
-            {menuAberto && (
-              <div className="absolute mt-2 bg-white text-[#5B5141] border rounded-md shadow-xl w-44 animate-fade-in z-50">
-                {categorias.map((cat, index) => (
-                  <Link
-                    key={index}
-                    to={`/categoria/${cat}`}
-                    className="block px-4 py-2 hover:bg-[#EFEAE1] transition"
-                  >
-                    {cat}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          {dropdownOpen && (
+            <div className="absolute mt-2 bg-white text-black rounded shadow-md w-40">
+              {["Botas", "Tênis", "Sandálias", "Sapatilhas", "Chinelos"].map((categoria) => (
+                <Link
+                  key={categoria}
+                  to={`/categoria/${categoria.toLowerCase()}`}
+                  className="block px-4 py-2 hover:bg-green-100"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  {categoria}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
 
+        {/* Favoritos */}
+        <Link
+          to="/favoritos"
+          className={`flex items-center gap-1 hover:text-green-400 transition ${isActive("/favoritos") ? "underline font-semibold" : ""}`}
+        >
+          <FiHeart /> Favoritos
+        </Link>
+
+        {/* Carrinho */}
+        <Link
+          to="/carrinho"
+          className={`flex items-center gap-1 hover:text-green-400 transition ${isActive("/carrinho") ? "underline font-semibold" : ""}`}
+        >
+          <FiShoppingCart /> Carrinho
+        </Link>
+
+        {/* Admin */}
+        {isAdmin && (
           <Link
             to="/admin"
-            className={`flex items-center gap-1 hover:text-neutral-100 transition ${isActive("/admin") ? "underline font-semibold" : ""}`}
+            className={`flex items-center gap-1 hover:text-green-400 transition ${isActive("/admin") ? "underline font-semibold" : ""}`}
           >
             <FiUser /> Admin
           </Link>
+        )}
 
-          <Link
-            to="/historico"
-            className={`flex items-center gap-1 hover:text-neutral-100 transition ${isActive("/historico") ? "underline font-semibold" : ""}`}
+        {/* Login ou Logout */}
+        {user ? (
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1 hover:text-red-400 transition"
           >
-            <FiClock /> Histórico
-          </Link>
-
+            <FiLogOut /> Sair
+          </button>
+        ) : (
           <Link
-            to="/favoritos"
-            className={`hover:text-neutral-100 transition ${isActive("/favoritos") ? "underline font-semibold" : ""}`}
+            to="/login"
+            className={`flex items-center gap-1 hover:text-green-400 transition ${isActive("/login") ? "underline font-semibold" : ""}`}
           >
-            ❤️ Favoritos
+            <FiUser /> Login
           </Link>
-
-          {/* Carrinho */}
-          <Link
-            to="/carrinho"
-            className="relative hover:scale-110 transition duration-200"
-          >
-            <FiShoppingCart className="w-6 h-6" />
-            {totalItens > 0 && (
-              <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                {totalItens}
-              </span>
-            )}
-          </Link>
-
-          {/* Usuário logado */}
-          {user ? (
-            <>
-              <span className="text-sm bg-white text-[#5B5141] px-3 py-1 rounded-full font-medium">
-                {user.displayName || user.email}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="text-sm px-3 py-1 border rounded hover:bg-white hover:text-[#5B5141] transition"
-              >
-                Sair
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="text-sm px-3 py-1 border rounded hover:bg-white hover:text-[#5B5141]">Login</Link>
-              <Link to="/cadastro" className="text-sm px-3 py-1 border rounded hover:bg-white hover:text-[#5B5141]">Cadastro</Link>
-            </>
-          )}
-        </div>
-      </nav>
-    </header>
+        )}
+      </div>
+    </nav>
   );
 };
 
