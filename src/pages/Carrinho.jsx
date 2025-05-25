@@ -15,7 +15,7 @@ const Carrinho = () => {
     desconto,
     total,
     totalComDesconto,
-    registrarPedido
+    registrarPedido,
   } = useCarrinho();
 
   const [modoEscuro, setModoEscuro] = useState(false);
@@ -26,35 +26,31 @@ const Carrinho = () => {
   };
 
   const pagarComMercadoPago = async () => {
-    if (carrinho.length === 0) {
-      toast.error("Seu carrinho está vazio!");
-      return;
-    }
+    const itensParaPagar = carrinho.map((item) => ({
+      title: item.nome,
+      price: item.preco,
+      quantity: item.quantidade,
+    }));
 
     try {
       const response = await fetch("https://buenas-store.vercel.app/api/create-preference", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    title: produto.nome,
-    price: produto.preco,
-    quantity: produto.quantidade,
-  }),
-});
-
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(itensParaPagar[0]), // Simulando com o primeiro item
+      });
 
       const data = await response.json();
 
       if (data.init_point) {
-        registrarPedido(); // Registra o pedido antes de redirecionar
+        registrarPedido(); // Registra o pedido antes do redirecionamento
         window.location.href = data.init_point;
       } else {
         toast.error("Erro ao criar pagamento.");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Erro ao iniciar pagamento:", error);
       toast.error("Erro ao conectar com o Mercado Pago.");
     }
   };
