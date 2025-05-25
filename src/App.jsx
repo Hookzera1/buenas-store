@@ -21,7 +21,8 @@ import Confirmacao from "./pages/Confirmacao";
 import Sucesso from "./pages/Sucesso"; // ✅ import
 import Pedidos from "./pages/Pedidos";
 import WhatsappChat from "./components/WhatsappChat";
-
+import Erro from "./pages/Erro";
+import Pendente from "./pages/Pendente";
 function App() {
   return (
     <CarrinhoProvider>
@@ -31,7 +32,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/produto/:id" element={<Produto />} />
         <Route path="/carrinho" element={<Carrinho />} />
-        <Route path="/admin" element={<Admin />} />
         <Route path="/categoria/:categoriaSlug" element={<Categoria />} /> {/* ✅ Agora dentro do <Routes> */}
         <Route path="/historico" element={<Historico />} />
         <Route path="/pedidos" element={<Pedidos />} />
@@ -40,6 +40,9 @@ function App() {
         <Route path="/pagamento" element={<Pagamento />} />
         <Route path="/checkout" element={<Checkout />} />
          <Route path="/login" element={<Login />} />
+         <Route path="/sucesso" element={<Sucesso />} />
+<Route path="/erro" element={<Erro />} />
+<Route path="/pendente" element={<Pendente />} />
          <Route path="/cadastro" element={<Cadastro />} />
          <Route path="/admin" element={
   <RotaProtegida>
