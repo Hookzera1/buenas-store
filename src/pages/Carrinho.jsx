@@ -28,7 +28,7 @@ const Carrinho = () => {
   const pagarComMercadoPago = async () => {
     const itensParaPagar = carrinho.map((item) => ({
       title: item.nome,
-      price: item.preco,
+       unit_price: item.preco,
       quantity: item.quantidade,
     }));
 

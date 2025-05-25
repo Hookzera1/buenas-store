@@ -1,20 +1,19 @@
-import mercadopago from 'mercadopago';
-
-mercadopago.configure({
-  access_token: process.env.MP_ACCESS_TOKEN, // use variável de ambiente
-});
-
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const { itens } = req.body;
 
+      console.log("Recebido do frontend:", itens); // debug
+
+      if (!itens || !Array.isArray(itens) || itens.length === 0) {
+        return res.status(400).json({ error: "Nenhum item enviado" });
+      }
+
       const preference = {
         items: itens,
         back_urls: {
           success: "https://buenas-store.vercel.app/sucesso",
-          failure: "https://buenas-store.vercel.app/falha",
-          pending: "https://buenas-store.vercel.app/aguardando"
+          failure: "https://buenas-store.vercel.app/falha"
         },
         auto_return: "approved"
       };
