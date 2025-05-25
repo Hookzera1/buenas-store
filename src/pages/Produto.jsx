@@ -11,23 +11,23 @@ import {
   orderBy
 } from "firebase/firestore";
 import { useAuth } from "../components/context/AuthContext";
-import { useCarrinho } from "../components/context/CarrinhoContext"; // ✅ importado
+import { useCarrinho } from "../components/context/CarrinhoContext";
 
 const Produto = () => {
   const { id } = useParams();
-  const [produto, setProduto] = useState(null);
+  const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [comentario, setComentario] = useState("");
   const [nota, setNota] = useState(0);
   const [avaliacoes, setAvaliacoes] = useState([]);
   const { usuario } = useAuth();
-  const { adicionarAoCarrinho } = useCarrinho(); // ✅ uso do contexto
+  const { adicionarAoCarrinho } = useCarrinho();
 
   useEffect(() => {
     const buscarProduto = async () => {
       const docRef = doc(db, "produtos", id);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setProduto({ id, ...docSnap.data() }); // Inclui ID
+        setProdutoSelecionado({ id, ...docSnap.data() });
       }
     };
 
@@ -72,27 +72,27 @@ const Produto = () => {
     });
   };
 
-  if (!produto) return <div className="p-4">Carregando produto...</div>;
+  if (!produtoSelecionado) return <div className="p-4">Carregando produto...</div>;
 
   return (
     <div className="p-4 max-w-3xl mx-auto text-[#5B5141] font-[Poppins]">
-      <h1 className="text-3xl font-bold mb-4">{produto.nome}</h1>
+      <h1 className="text-3xl font-bold mb-4">{produtoSelecionado.nome}</h1>
       <img
-        src={produto.imagem}
-        alt={produto.nome}
+        src={produtoSelecionado.imagem}
+        alt={produtoSelecionado.nome}
         className="w-full max-h-96 object-cover rounded-xl mb-4"
       />
-      <p className="text-xl font-semibold mb-2">R$ {produto.preco?.toFixed(2)}</p>
+      <p className="text-xl font-semibold mb-2">
+        R$ {produtoSelecionado.preco?.toFixed(2)}
+      </p>
 
-      {/* ✅ Botão Adicionar ao Carrinho */}
       <button
-        onClick={() => adicionarAoCarrinho(produto)}
+        onClick={() => adicionarAoCarrinho(produtoSelecionado)}
         className="bg-[#5B5141] text-white px-6 py-3 rounded-xl hover:bg-[#403828] mb-8"
       >
         🛒 Adicionar ao Carrinho
       </button>
 
-      {/* Avaliações */}
       <div className="mt-10">
         <h2 className="text-2xl font-bold mb-4">⭐ Avaliações</h2>
 
@@ -121,7 +121,6 @@ const Produto = () => {
           </div>
         )}
 
-        {/* Formulário */}
         <div className="mt-8 bg-[#F5F1E8] p-4 rounded-xl">
           <h3 className="font-semibold mb-2">Deixe sua avaliação ✍️</h3>
 
