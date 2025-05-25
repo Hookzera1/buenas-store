@@ -26,34 +26,37 @@ const Carrinho = () => {
   };
 
   const pagarComMercadoPago = async () => {
-    const itensParaPagar = carrinho.map((item) => ({
-      title: item.nome,
-       unit_price: item.preco,
-      quantity: item.quantidade,
-    }));
+  const itensParaPagar = carrinho.map((item) => ({
+    title: item.nome,
+    unit_price: parseFloat(item.preco),
+    quantity: item.quantidade,
+  }));
+console.log("Itens enviados ao Mercado Pago:", itensParaPagar);
 
-    try {
-      const response = await fetch("https://buenas-store.vercel.app/api/create-preference", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(itensParaPagar[0]), // Simulando com o primeiro item
-      });
+  try {
+    const response = await fetch("https://buenas-store.vercel.app/api/create-preference", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ itens: itensParaPagar }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (data.init_point) {
-        registrarPedido(); // Registra o pedido antes do redirecionamento
-        window.location.href = data.init_point;
-      } else {
-        toast.error("Erro ao criar pagamento.");
-      }
-    } catch (error) {
-      console.error("Erro ao iniciar pagamento:", error);
-      toast.error("Erro ao conectar com o Mercado Pago.");
+    if (data.init_point) {
+      registrarPedido(); // Registra o pedido antes do redirecionamento
+      window.location.href = data.init_point;
+    } else {
+      toast.error("Erro ao criar pagamento.");
+      console.error("Erro da API:", data);
     }
-  };
+  } catch (error) {
+    console.error("Erro ao iniciar pagamento:", error);
+    toast.error("Erro ao conectar com o Mercado Pago.");
+  }
+};
+
 
   return (
     <div className={`min-h-screen ${modoEscuro ? "bg-[#1a1a1a] text-white" : "bg-[#EFEAE1] text-[#5B5141]"} font-[Poppins]`}>
