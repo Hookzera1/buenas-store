@@ -12,7 +12,7 @@ export default {
         verde: "#3B7D4B",     // cor de sucesso
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
+        sans: ['Poppins', 'sans-serif','Inter'],
       },
       animation: {
         "fade-in": "fadeIn 0.5s ease-out",

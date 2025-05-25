@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useCarrinho } from "../components/context/CarrinhoContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Trash2, Plus, Minus, Sun, Moon } from "lucide-react";
 import { toast } from "react-toastify";
 import "@fontsource/poppins";
@@ -17,7 +17,6 @@ const Carrinho = () => {
     totalComDesconto
   } = useCarrinho();
 
-  const navigate = useNavigate();
   const [modoEscuro, setModoEscuro] = useState(false);
   const [codigoCupom, setCodigoCupom] = useState("");
 
@@ -30,8 +29,36 @@ const Carrinho = () => {
     }
   };
 
-  const irParaPagamento = () => {
-    navigate("/pagamento");
+  const pagarComMercadoPago = async () => {
+    if (carrinho.length === 0) {
+      toast.error("Seu carrinho está vazio!");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/create-preference", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          itens: carrinho.map((item) => ({
+            title: item.nome,
+            quantity: item.quantidade,
+            unit_price: item.preco
+          }))
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        toast.error("Erro ao criar pagamento.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao conectar com o Mercado Pago.");
+    }
   };
 
   return (
@@ -124,10 +151,10 @@ const Carrinho = () => {
                 Limpar Carrinho
               </button>
               <button
-                onClick={irParaPagamento}
+                onClick={pagarComMercadoPago}
                 className="px-6 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-md"
               >
-                Finalizar Compra
+                Pagar com Mercado Pago
               </button>
             </div>
           </div>
