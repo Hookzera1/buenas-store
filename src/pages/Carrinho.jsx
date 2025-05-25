@@ -32,17 +32,18 @@ const Carrinho = () => {
     }
 
     try {
-      const response = await fetch("https://buenas-store.vercel.app//api/create-preference", {
+      const response = await fetch("https://buenas-store.vercel.app/api/create-preference", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    title: "Tênis",
-    price: 199.9,
-    quantity: 1,
+    title: produto.nome,
+    price: produto.preco,
+    quantity: produto.quantidade,
   }),
 });
+
 
       const data = await response.json();
 
