@@ -14,19 +14,15 @@ const Carrinho = () => {
     aplicarCupom,
     desconto,
     total,
-    totalComDesconto
+    totalComDesconto,
+    registrarPedido
   } = useCarrinho();
 
   const [modoEscuro, setModoEscuro] = useState(false);
   const [codigoCupom, setCodigoCupom] = useState("");
 
   const aplicarCupomHandler = () => {
-    const resultado = aplicarCupom(codigoCupom);
-    if (resultado.sucesso) {
-      toast.success("Cupom aplicado: 10% de desconto!");
-    } else {
-      toast.error("Cupom inválido.");
-    }
+    aplicarCupom(codigoCupom);
   };
 
   const pagarComMercadoPago = async () => {
@@ -36,21 +32,22 @@ const Carrinho = () => {
     }
 
     try {
-      const response = await fetch("/api/create-preference", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          itens: carrinho.map((item) => ({
-            title: item.nome,
-            quantity: item.quantidade,
-            unit_price: item.preco
-          }))
-        })
-      });
+      const response = await fetch("https://buenas-store.vercel.app//api/create-preference", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    title: "Tênis",
+    price: 199.9,
+    quantity: 1,
+  }),
+});
 
       const data = await response.json();
 
       if (data.init_point) {
+        registrarPedido(); // Registra o pedido antes de redirecionar
         window.location.href = data.init_point;
       } else {
         toast.error("Erro ao criar pagamento.");
