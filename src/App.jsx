@@ -39,13 +39,14 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/pagamento" element={<Pagamento />} />
         <Route path="/confirmacao" element={<Confirmacao />} />
-        <Route path="/Sucesso" element={<Sucesso />} />
+        <Route path="/sucesso" element={<Sucesso />} />
         <Route path="/historico" element={<Historico />} />
         <Route path="/pedidos" element={<Pedidos />} />
         <Route path="/erro" element={<Erro />} />
         <Route path="/pendente" element={<Pendente />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/Cadastro" element={<Cadastro />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+
 
         {/* 🔒 Rotas protegidas por login */}
         <Route
