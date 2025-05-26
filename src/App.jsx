@@ -25,6 +25,7 @@ import Erro from "./pages/Erro";
 import Pendente from "./pages/Pendente";
 import AdminUsers from "./pages/AdminUsers"; // ✅ Import da nova tela de admin
 
+
 function App() {
   return (
     <CarrinhoProvider>
@@ -46,7 +47,7 @@ function App() {
         <Route path="/pendente" element={<Pendente />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
-
+        
 
         {/* 🔒 Rotas protegidas por login */}
         <Route

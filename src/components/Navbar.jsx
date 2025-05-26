@@ -9,10 +9,11 @@ const Navbar = () => {
 
   const navItems = [
     { label: 'Início', to: '/' },
-    { label: 'Produtos', to: '/produtos' },
     { label: 'Favoritos', to: '/favoritos', icon: <FaHeart /> },
+    {label: 'Historico', to: '/historico'},
     { label: 'Carrinho', to: '/carrinho', icon: <FaShoppingCart /> },
     { label: 'Login', to: '/login', icon: <FaUser /> },
+  
   ];
 
   const toggleMenu = () => setIsOpen(!isOpen);
@@ -29,7 +30,8 @@ const Navbar = () => {
         {/* Menu Desktop */}
         <nav className="hidden md:flex gap-6 items-center">
           {navItems.map(({ label, to, icon }) => (
-            <Link
+           
+           <Link
               key={to}
               to={to}
               className={`flex items-center gap-1 px-3 py-1 rounded-full transition duration-200 hover:bg-[#4a3d3d] ${
@@ -39,6 +41,7 @@ const Navbar = () => {
               {icon && icon}
               {label}
             </Link>
+            
           ))}
         </nav>
 
