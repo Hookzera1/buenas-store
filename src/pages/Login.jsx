@@ -42,7 +42,7 @@ const Login = () => {
           Entrar
         </button>
         <p className="text-sm mt-2 text-center">
-  Não tem uma conta? <a href="/cadastro" className="text-blue-600 hover:underline">Cadastre-se</a>
+  Não tem uma conta? <a href="/Cadastro" className="text-blue-600 hover:underline">Cadastre-se</a>
 </p>
 
       </form>
